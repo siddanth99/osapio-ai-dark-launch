@@ -92,6 +92,56 @@ async def get_current_user_profile(current_user: dict = Depends(get_current_user
         user_ref.update({'last_login': datetime.utcnow()})
         return user_doc.to_dict()
 
+@api_router.put("/me")
+async def update_user_profile(
+    profile_data: dict,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Update current user's profile
+    """
+    firestore_client = get_firestore_client()
+    user_ref = firestore_client.collection('users').document(current_user['uid'])
+    
+    # Prepare update data
+    update_data = {}
+    if 'display_name' in profile_data:
+        update_data['display_name'] = profile_data['display_name']
+    
+    update_data['updated_at'] = datetime.utcnow()
+    
+    user_ref.update(update_data)
+    
+    return {"message": "Profile updated successfully"}
+
+@api_router.delete("/upload-record/{upload_id}")
+async def delete_upload_record(
+    upload_id: str,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Delete a specific upload record (user can only delete their own uploads)
+    """
+    # Check if the upload belongs to the current user
+    upload = await db.file_uploads.find_one({
+        "id": upload_id,
+        "user_id": current_user['uid']
+    })
+    
+    if not upload:
+        raise HTTPException(status_code=404, detail="Upload not found or access denied")
+    
+    # Delete the upload record
+    result = await db.file_uploads.delete_one({
+        "id": upload_id,
+        "user_id": current_user['uid']
+    })
+    
+    if result.deleted_count == 1:
+        return {"message": "Upload deleted successfully"}
+    else:
+        raise HTTPException(status_code=404, detail="Upload not found")
+
 @api_router.post("/upload-record")
 async def create_upload_record(
     filename: str,
