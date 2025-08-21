@@ -12,10 +12,12 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, LogOut, Settings, FileText } from 'lucide-react';
 import { AuthDialog } from './AuthDialog';
+import { useNavigate } from 'react-router-dom';
 
 export const UserMenu: React.FC = () => {
   const { user, signOut } = useAuth();
   const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const navigate = useNavigate();
 
   if (!user) {
     return (
@@ -49,6 +51,10 @@ export const UserMenu: React.FC = () => {
     return user.displayName || user.email || 'User';
   };
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -76,11 +82,17 @@ export const UserMenu: React.FC = () => {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer">
+        <DropdownMenuItem 
+          className="cursor-pointer"
+          onClick={() => handleNavigation('/profile')}
+        >
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">
+        <DropdownMenuItem 
+          className="cursor-pointer"
+          onClick={() => handleNavigation('/my-uploads')}
+        >
           <FileText className="mr-2 h-4 w-4" />
           <span>My Uploads</span>
         </DropdownMenuItem>
