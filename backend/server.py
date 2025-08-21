@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, Depends, HTTPException
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,10 +6,13 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 import uuid
 from datetime import datetime
 
+# Import Firebase auth middleware
+from auth_middleware import get_current_user, optional_auth
+from firebase_config import get_firestore_client
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -25,7 +28,6 @@ app = FastAPI()
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
 
-
 # Define Models
 class StatusCheck(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -35,11 +37,94 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
-# Add your routes to the router instead of directly to app
+class UserProfile(BaseModel):
+    uid: str
+    email: Optional[str] = None
+    phone_number: Optional[str] = None
+    display_name: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    last_login: datetime = Field(default_factory=datetime.utcnow)
+
+class FileUploadRecord(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    user_id: str
+    filename: str
+    file_size: int
+    upload_timestamp: datetime = Field(default_factory=datetime.utcnow)
+    analysis_status: str = "pending"  # pending, processing, completed, failed
+
+# Public routes (no authentication required)
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "osapio API - Authentication enabled"}
 
+@api_router.get("/health")
+async def health_check():
+    return {"status": "healthy", "timestamp": datetime.utcnow()}
+
+# Protected routes (authentication required)
+@api_router.get("/me")
+async def get_current_user_profile(current_user: dict = Depends(get_current_user)):
+    """
+    Get current authenticated user's profile
+    """
+    firestore_client = get_firestore_client()
+    
+    # Check if user profile exists in Firestore
+    user_ref = firestore_client.collection('users').document(current_user['uid'])
+    user_doc = user_ref.get()
+    
+    if not user_doc.exists:
+        # Create user profile if doesn't exist
+        user_profile = {
+            'uid': current_user['uid'],
+            'email': current_user.get('email'),
+            'phone_number': current_user.get('phone_number'),
+            'email_verified': current_user.get('email_verified', False),
+            'provider_id': current_user.get('provider_id'),
+            'created_at': datetime.utcnow(),
+            'last_login': datetime.utcnow()
+        }
+        user_ref.set(user_profile)
+        return user_profile
+    else:
+        # Update last login
+        user_ref.update({'last_login': datetime.utcnow()})
+        return user_doc.to_dict()
+
+@api_router.post("/upload-record")
+async def create_upload_record(
+    filename: str,
+    file_size: int,
+    current_user: dict = Depends(get_current_user)
+):
+    """
+    Create a record for file upload (protected endpoint)
+    """
+    upload_record = FileUploadRecord(
+        user_id=current_user['uid'],
+        filename=filename,
+        file_size=file_size
+    )
+    
+    # Store in MongoDB
+    _ = await db.file_uploads.insert_one(upload_record.dict())
+    
+    return {
+        "message": "Upload record created",
+        "upload_id": upload_record.id,
+        "user_id": current_user['uid']
+    }
+
+@api_router.get("/my-uploads")
+async def get_user_uploads(current_user: dict = Depends(get_current_user)):
+    """
+    Get current user's file uploads
+    """
+    uploads = await db.file_uploads.find({"user_id": current_user['uid']}).to_list(100)
+    return uploads
+
+# Legacy routes (keeping for backward compatibility)
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     status_dict = input.dict()
