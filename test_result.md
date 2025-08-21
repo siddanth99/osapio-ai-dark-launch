@@ -168,51 +168,63 @@ backend:
 frontend:
   - task: "Google OAuth Sign-In"
     implemented: true
-    working: "NA"
+    working: false
     file: "/app/frontend/src/contexts/AuthContext.tsx"
-    stuck_count: 0
+    stuck_count: 1
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
         comment: "Google Sign-In implementation found in AuthContext. Needs testing to verify functionality and identify reported issues."
+      - working: false
+        agent: "testing"
+        comment: "CRITICAL: Google Sign-In fails with Firebase Error (auth/unauthorized-domain). The domain 'repo-preview-16.preview.emergentagent.com' is not authorized in Firebase console. Console shows: 'Add your domain to the OAuth redirect domains list in the Firebase console -> Authentication -> Settings -> Authorized domains tab.'"
 
   - task: "Email/Password Authentication"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/contexts/AuthContext.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
         comment: "Email signup and signin implementation found. Includes email verification functionality. Needs testing to verify email confirmation issues."
+      - working: true
+        agent: "testing"
+        comment: "Email signup works correctly. Successfully created account with john.smith.test@example.com. Firebase sends verification email as expected. User receives success message: 'Account created! Please check your email for verification.' Authentication state persists correctly."
 
   - task: "Authentication UI Components"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/components/Auth/AuthDialog.tsx"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
         comment: "Authentication dialog with Google and email/password forms implemented. Needs UI testing to verify user flows."
+      - working: true
+        agent: "testing"
+        comment: "Authentication dialog UI works correctly. Forms are properly structured with validation. Tabs switch between Sign In and Sign Up correctly. User menu shows authentication status and email verification status."
 
   - task: "Firebase Configuration"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/frontend/src/lib/firebase.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "testing"
         comment: "Firebase client configuration found. Needs testing to verify proper initialization and service availability."
+      - working: true
+        agent: "testing"
+        comment: "Firebase configuration is properly initialized. Auth and Firestore services are working. Environment variables are correctly loaded. Only issue is unauthorized domain for Google OAuth."
 
 metadata:
   created_by: "testing_agent"
