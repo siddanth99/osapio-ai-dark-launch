@@ -216,16 +216,16 @@ frontend:
 
 metadata:
   created_by: "testing_agent"
-  version: "1.0"
-  test_sequence: 1
-  run_ui: false
+  version: "1.1"
+  test_sequence: 2
+  run_ui: true
 
 test_plan:
   current_focus:
-    - "Firebase Admin SDK Initialization"
-    - "Public API Endpoints"
-    - "Protected API Endpoints Authentication"
-    - "Firebase Token Validation"
+    - "Google OAuth Sign-In"
+    - "Email/Password Authentication"
+    - "Authentication UI Components"
+    - "Firebase Configuration"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
@@ -233,3 +233,5 @@ test_plan:
 agent_communication:
   - agent: "testing"
     message: "Completed comprehensive Firebase authentication integration testing. All critical functionality working correctly. Firebase Admin SDK properly initialized, public endpoints accessible, protected endpoints correctly rejecting unauthorized requests. Minor CORS header visibility issue noted but doesn't affect functionality."
+  - agent: "testing"
+    message: "Starting frontend authentication testing. Focus on Google Sign-In issues and email confirmation problems as reported. Will test authentication flows, UI components, and Firebase configuration."
