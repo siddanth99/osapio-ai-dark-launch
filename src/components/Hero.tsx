@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Brain, Zap } from "lucide-react";
+import { FileUpload } from "@/components/FileUpload";
 
 const Hero = () => {
   return (
@@ -41,7 +42,12 @@ const Hero = () => {
 
         {/* CTA buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16 animate-slide-up" style={{ animationDelay: '0.6s' }}>
-          <Button variant="hero" size="lg" className="group">
+          <Button 
+            variant="hero" 
+            size="lg" 
+            className="group"
+            onClick={() => document.getElementById('file-upload-section')?.scrollIntoView({ behavior: 'smooth' })}
+          >
             Start Your AI Journey
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
@@ -74,6 +80,13 @@ const Hero = () => {
             <p className="text-sm text-muted-foreground text-center">
               Built for scale with enterprise-grade security and compliance standards
             </p>
+          </div>
+        </div>
+
+        {/* File Upload Section */}
+        <div id="file-upload-section" className="mt-20 animate-fade-in" style={{ animationDelay: '1s' }}>
+          <div className="max-w-2xl mx-auto">
+            <FileUpload />
           </div>
         </div>
       </div>
