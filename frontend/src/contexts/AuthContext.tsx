@@ -62,7 +62,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       const result = await signInWithPopup(auth, provider);
       toast.success(`Welcome ${result.user.displayName || result.user.email}!`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Google sign-in error:', error);
       toast.error('Failed to sign in with Google');
       throw error;
@@ -83,16 +83,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         await sendEmailVerification(result.user);
         toast.success('Account created! Please check your email for verification.');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Email signup error:', error);
       let errorMessage = 'Failed to create account';
       
-      if (error.code === 'auth/email-already-in-use') {
-        errorMessage = 'Email address is already in use';
-      } else if (error.code === 'auth/weak-password') {
-        errorMessage = 'Password is too weak';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email address';
+      if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string };
+        if (firebaseError.code === 'auth/email-already-in-use') {
+          errorMessage = 'Email address is already in use';
+        } else if (firebaseError.code === 'auth/weak-password') {
+          errorMessage = 'Password is too weak';
+        } else if (firebaseError.code === 'auth/invalid-email') {
+          errorMessage = 'Invalid email address';
+        }
       }
       
       toast.error(errorMessage);
@@ -104,16 +107,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
       toast.success(`Welcome back ${result.user.displayName || result.user.email}!`);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Email sign-in error:', error);
       let errorMessage = 'Failed to sign in';
       
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-        errorMessage = 'Invalid email or password';
-      } else if (error.code === 'auth/invalid-email') {
-        errorMessage = 'Invalid email address';
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = 'Too many failed attempts. Please try again later.';
+      if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string };
+        if (firebaseError.code === 'auth/user-not-found' || firebaseError.code === 'auth/wrong-password') {
+          errorMessage = 'Invalid email or password';
+        } else if (firebaseError.code === 'auth/invalid-email') {
+          errorMessage = 'Invalid email address';
+        } else if (firebaseError.code === 'auth/too-many-requests') {
+          errorMessage = 'Too many failed attempts. Please try again later.';
+        }
       }
       
       toast.error(errorMessage);
@@ -126,14 +132,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const confirmationResult = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier);
       toast.success('Verification code sent to your phone');
       return confirmationResult;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Phone sign-in error:', error);
       let errorMessage = 'Failed to send verification code';
       
-      if (error.code === 'auth/invalid-phone-number') {
-        errorMessage = 'Invalid phone number';
-      } else if (error.code === 'auth/too-many-requests') {
-        errorMessage = 'Too many requests. Please try again later.';
+      if (error && typeof error === 'object' && 'code' in error) {
+        const firebaseError = error as { code: string };
+        if (firebaseError.code === 'auth/invalid-phone-number') {
+          errorMessage = 'Invalid phone number';
+        } else if (firebaseError.code === 'auth/too-many-requests') {
+          errorMessage = 'Too many requests. Please try again later.';
+        }
       }
       
       toast.error(errorMessage);

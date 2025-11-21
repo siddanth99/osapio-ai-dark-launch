@@ -10,31 +10,23 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, LogOut, Settings, FileText } from 'lucide-react';
-import { AuthDialog } from './AuthDialog';
+import { User, LogOut, FileText, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export const UserMenu: React.FC = () => {
   const { user, signOut } = useAuth();
-  const [showAuthDialog, setShowAuthDialog] = useState(false);
   const navigate = useNavigate();
 
   if (!user) {
     return (
-      <>
-        <Button 
-          onClick={() => setShowAuthDialog(true)}
-          variant="glow" 
-          size="sm"
-          className="ml-4"
-        >
-          Sign In
-        </Button>
-        <AuthDialog 
-          isOpen={showAuthDialog} 
-          onClose={() => setShowAuthDialog(false)} 
-        />
-      </>
+      <Button 
+        onClick={() => navigate('/login')}
+        variant="glow" 
+        size="sm"
+        className="ml-4"
+      >
+        Sign In
+      </Button>
     );
   }
 
@@ -84,6 +76,13 @@ export const UserMenu: React.FC = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem 
           className="cursor-pointer"
+          onClick={() => handleNavigation('/home')}
+        >
+          <Home className="mr-2 h-4 w-4" />
+          <span>Home</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem 
+          className="cursor-pointer"
           onClick={() => handleNavigation('/profile')}
         >
           <User className="mr-2 h-4 w-4" />
@@ -95,10 +94,6 @@ export const UserMenu: React.FC = () => {
         >
           <FileText className="mr-2 h-4 w-4" />
           <span>My Uploads</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="cursor-pointer">
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem 

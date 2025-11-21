@@ -31,9 +31,14 @@ dist/
 dist
 
 # Environment files (comprehensive coverage)
-
+.env
+.env.local
+.env.*.local
+backend/.env
+frontend/.env
 *token.json*
 *credentials.json*
+*firebase_service_account.json
 
 # Logs and debug files
 npm-debug.log*

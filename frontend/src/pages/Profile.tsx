@@ -59,7 +59,7 @@ const ProfileContent = () => {
       // Update backend user profile
       const token = await getIdToken();
       if (token) {
-        const backendUrl = import.meta.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_BACKEND_URL;
+        const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
         await fetch(`${backendUrl}/api/me`, {
           method: 'PUT',
           headers: {
@@ -133,15 +133,15 @@ const ProfileContent = () => {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-hero">
       <Navigation />
       <div className="pt-24 pb-12 px-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">Profile Settings</h1>
+            <h1 className="text-3xl font-bold mb-2">Profile</h1>
             <p className="text-muted-foreground">
-              Manage your account settings and profile information
+              Manage your account and profile information
             </p>
           </div>
 

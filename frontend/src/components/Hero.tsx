@@ -1,24 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, Brain, Zap } from "lucide-react";
-import { FileUpload } from "@/components/FileUpload";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+  const navigate = useNavigate();
+  
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-hero">
-      {/* Animated background elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-      </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
         {/* Logo/Brand */}
         <div className="flex items-center justify-center mb-8 animate-fade-in">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Brain className="w-12 h-12 text-primary animate-pulse-glow" />
-              <Sparkles className="w-6 h-6 text-accent absolute -top-1 -right-1 animate-pulse" />
+              <Brain className="w-12 h-12 text-primary" />
+              <Sparkles className="w-6 h-6 text-accent absolute -top-1 -right-1" />
             </div>
             <h1 className="text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
               osapio
@@ -46,12 +42,16 @@ const Hero = () => {
             variant="hero" 
             size="lg" 
             className="group"
-            onClick={() => document.getElementById('file-upload-section')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => navigate('/login')}
           >
             Start Your AI Journey
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
-          <Button variant="hero-outline" size="lg">
+          <Button 
+            variant="hero-outline" 
+            size="lg"
+            onClick={() => navigate('/login')}
+          >
             Watch Demo
           </Button>
         </div>
@@ -83,10 +83,18 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* File Upload Section */}
-        <div id="file-upload-section" className="mt-20 animate-fade-in" style={{ animationDelay: '1s' }}>
+        {/* CTA to Login/Sign Up */}
+        <div className="mt-20 animate-fade-in" style={{ animationDelay: '1s' }}>
           <div className="max-w-2xl mx-auto">
-            <FileUpload />
+            <Button 
+              variant="hero" 
+              size="lg" 
+              className="group"
+              onClick={() => navigate('/login')}
+            >
+              Get Started
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Button>
           </div>
         </div>
       </div>

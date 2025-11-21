@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const CallToAction = () => {
+  const navigate = useNavigate();
+  
   return (
     <section className="py-24 px-6 relative overflow-hidden">
       {/* Background gradient */}
@@ -33,11 +36,21 @@ const CallToAction = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up" style={{ animationDelay: '0.6s' }}>
-          <Button variant="glow" size="lg" className="group text-lg px-8 py-4">
+          <Button 
+            variant="glow" 
+            size="lg" 
+            className="group text-lg px-8 py-4"
+            onClick={() => navigate('/login')}
+          >
             Get Started Now
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
-          <Button variant="hero-outline" size="lg" className="text-lg px-8 py-4">
+          <Button 
+            variant="hero-outline" 
+            size="lg" 
+            className="text-lg px-8 py-4"
+            onClick={() => navigate('/login')}
+          >
             Schedule Demo
           </Button>
         </div>
