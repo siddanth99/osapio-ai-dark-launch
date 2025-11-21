@@ -95,7 +95,6 @@ const MyUploadsContent = () => {
 
       const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
       const url = `${backendUrl}/api/my-uploads`;
-      console.log('Fetching uploads from:', url);
       
       const response = await fetch(url, {
         headers: {
@@ -103,12 +102,8 @@ const MyUploadsContent = () => {
         }
       });
 
-      console.log('Response status:', response.status, response.statusText);
-
       if (response.ok) {
         const data = await response.json();
-        console.log('Received uploads data:', data);
-        console.log('Number of uploads:', Array.isArray(data) ? data.length : 0);
         setUploads(Array.isArray(data) ? data : []);
       } else {
         const errorData = await response.json().catch(() => ({}));

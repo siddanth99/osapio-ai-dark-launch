@@ -108,13 +108,6 @@ const FileUploadContent = ({ onAnalysisComplete }: FileUploadProps) => {
 
       // Step 1: Upload file to Firebase Storage
       const storageRef = ref(storage, `uploads/${user.uid}/${Date.now()}_${file.name}`);
-      
-      console.log('Starting Firebase Storage upload:', {
-        path: `uploads/${user.uid}/${Date.now()}_${file.name}`,
-        fileName: file.name,
-        fileSize: file.size,
-        fileType: file.type
-      });
 
       const uploadTask = uploadBytesResumable(storageRef, file, {
         contentType: file.type || 'application/octet-stream'
@@ -131,7 +124,6 @@ const FileUploadContent = ({ onAnalysisComplete }: FileUploadProps) => {
           'state_changed',
           (snapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log('Upload progress:', Math.round(progress) + '%');
           },
           (error) => {
             clearTimeout(timeout);
@@ -165,9 +157,7 @@ const FileUploadContent = ({ onAnalysisComplete }: FileUploadProps) => {
           async () => {
             clearTimeout(timeout);
             try {
-              console.log('Upload completed, getting download URL...');
               const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-              console.log('Download URL obtained:', downloadURL);
               resolve(downloadURL);
             } catch (error) {
               console.error('Error getting download URL:', error);

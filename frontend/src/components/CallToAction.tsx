@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import TrustedBy from "./TrustedBy";
 
 const CallToAction = () => {
   const navigate = useNavigate();
@@ -55,15 +56,7 @@ const CallToAction = () => {
           </Button>
         </div>
 
-        <div className="mt-12 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <p className="text-sm text-muted-foreground mb-4">Trusted by leading enterprises worldwide</p>
-          <div className="flex justify-center items-center gap-8 opacity-60">
-            {/* Company logos would go here */}
-            <div className="w-24 h-8 bg-muted/50 rounded flex items-center justify-center text-xs">Enterprise A</div>
-            <div className="w-24 h-8 bg-muted/50 rounded flex items-center justify-center text-xs">Enterprise B</div>
-            <div className="w-24 h-8 bg-muted/50 rounded flex items-center justify-center text-xs">Enterprise C</div>
-          </div>
-        </div>
+        <TrustedBy />
       </div>
     </section>
   );
